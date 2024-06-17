@@ -17,3 +17,8 @@ BugReports: https://github.com/BrianNathanWhite/OpenLong/issues
 Depends: 
     R (>= 2.10)
 LazyData: true
+Imports: 
+    dplyr,
+    S7,
+    tibble,
+    tidyr
