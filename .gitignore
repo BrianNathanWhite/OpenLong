@@ -53,4 +53,4 @@ po/*~
 rsconnect/
 
 # sensitive data
-/sensitive/
+data-raw/sensitive/

@@ -15,5 +15,11 @@ Config/testthat/edition: 3
 URL: https://github.com/BrianNathanWhite/OpenLong
 BugReports: https://github.com/BrianNathanWhite/OpenLong/issues
 Depends: 
-    R (>= 2.10)
+    R (>= 4.3.0)
 LazyData: true
+Imports: 
+    dplyr,
+    readr,
+    S7,
+    tibble,
+    tidyr
