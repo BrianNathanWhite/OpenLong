@@ -19,6 +19,7 @@ Depends:
 LazyData: true
 Imports: 
     dplyr,
+    readr,
     S7,
     tibble,
     tidyr
