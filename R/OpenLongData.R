@@ -6,6 +6,7 @@ OpenLongData <- S7::new_class(
     filepath     = S7::class_character,
     baseline     = S7::class_data.frame,
     longitudinal = S7::class_data.frame,
+    components   = S7::class_list,
     loaded       = S7::new_property(S7::class_logical, default = FALSE),
     excluded     = S7::new_property(S7::class_logical, default = FALSE),
     cleaned      = S7::new_property(S7::class_logical, default = FALSE),
@@ -21,7 +22,7 @@ OpenLongData <- S7::new_class(
 # virtual functions that will be defined in derived classes ----
 
 # each of these functions needs to be defined in all child classes
-read_baseline <- S7::new_generic("read_baseline", "x")
+read_baseline     <- S7::new_generic("read_baseline", "x")
 read_longitudinal <- S7::new_generic("read_longitudinal", "x")
 
 # Generics for all open long data objects ----
@@ -31,8 +32,8 @@ read_longitudinal <- S7::new_generic("read_longitudinal", "x")
 load <- S7::new_generic("load", "x")
 
 S7::method(load, OpenLongData) <- function(x){
-  x@baseline <- read_baseline(x)
-  x@longitudinal <- read_longitudinal(x)
+  x@components$baseline <- read_baseline(x)
+  x@components$longitudinal <- read_longitudinal(x)
   x
 }
 
@@ -89,6 +90,7 @@ S7::method(read_baseline, OpenLongMesa) <- function(x){
   #                                  "Data",
   #                                  "mesae1ecgcw_drepos_20201102.csv"),
   #                 show_col_types = FALSE)
+  tibble::tibble()
 }
 
 S7::method(read_longitudinal, OpenLongMesa) <- function(x){
