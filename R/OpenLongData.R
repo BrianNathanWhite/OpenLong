@@ -13,6 +13,7 @@ OpenLongData <- S7::new_class(
     derived      = S7::new_property(S7::class_logical, default = FALSE)
   ),
   validator = function(self) {
+
     if (length(self@filepath) != 1) {
       "@filepath must be a single character value"
     }
@@ -35,6 +36,12 @@ S7::method(load, OpenLongData) <- function(x){
   x@components$baseline <- read_baseline(x)
   x@components$longitudinal <- read_longitudinal(x)
   x
+}
+
+get_components <- S7::new_generic("get_components", "x")
+
+S7::method(get_components, OpenLongData) <- function(x){
+  x@components
 }
 
 as_list <- S7::new_generic("as_list", "x")
@@ -84,13 +91,15 @@ OpenLongMesa <- S7::new_class(
 S7::method(read_baseline, OpenLongMesa) <- function(x){
   # TODO: Simar to add code here for loading baseline files
   # the code below reads in one file given a valid filepath.
-  # readr::read_csv(file = file.path(x@filepath,
-  #                                  "Primary",
-  #                                  "Exam1",
-  #                                  "Data",
-  #                                  "mesae1ecgcw_drepos_20201102.csv"),
-  #                 show_col_types = FALSE)
-  tibble::tibble()
+  input <- readr::read_csv(file = file.path(x@filepath,
+                                            "Primary",
+                                            "Exam1",
+                                            "Data",
+                                            "mesae1ecgcw_drepos_20201102.csv"),
+                           show_col_types = FALSE)
+
+  list(input = input)
+
 }
 
 S7::method(read_longitudinal, OpenLongMesa) <- function(x){
