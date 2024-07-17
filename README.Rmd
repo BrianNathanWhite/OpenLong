@@ -45,7 +45,7 @@ Any combination of these data sets can be harmonized and output in a standardize
 You can install the development version of OpenLong like so:
 
 ``` r
-remotes::install_github("briannathanwhite/OpenLong")
+remotes::install_github("BrianNathanWhite/OpenLong")
 ```
 
 ## Example
