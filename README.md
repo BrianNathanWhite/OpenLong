@@ -1,50 +1,51 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # OpenLong
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of OpenLong is to …
+OpenLong harmonizes commonly used longitudinal data sets on aging. Its
+purpose is to facilitate machine learning benchmark studies, prediction
+modeling, and meta-analyses, enabling researchers to perform more
+efficient and accurate analyses.
+
+The cohorts currently available for harmonization are:
+
+1.  **Health ABC**: The Health, Aging and Body Composition Study ABC
+
+2.  **CHS**: The Cardiovascular Health Study
+
+3.  **MESA**: The Multi-Ethnic Study of Atheroscelerosis
+
+<!-- 4. **WHI-CTOS**: The Women's Health Initiative: Clinical Trial and Observational Study -->
+
+4.  **ARIC**: Atherosclerosis Risk in Communities Study
+
+Any combination of these data sets can be harmonized and output in a
+standardized format which consists of two data sets:
+
+1.  **baseline.csv**: A cross-sectional data set with information on
+    each patient at the baseline of the study.
+
+2.  **long.csv**: A longitudinal data set with information on each
+    patient collected as a sequence of time points.
 
 ## Installation
 
 You can install the development version of OpenLong like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+remotes::install_github("briannathanwhite/OpenLong")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+TBA
 
 ``` r
 library(OpenLong)
 ## basic example code
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
