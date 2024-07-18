@@ -17,7 +17,7 @@ test_that(
     for(i in seq_along(cmp$baseline)){
       expect_s3_class(cmp$baseline[[i]], class = 'data.frame')
     }
-
+# same assertion for longitudinal components
     for(i in seq_along(cmp$longitudinal)){
       expect_s3_class(cmp$longitudinal[[i]], class = 'data.frame')
     }
