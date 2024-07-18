@@ -13,6 +13,7 @@ OpenLongData <- S7::new_class(
     derived      = S7::new_property(S7::class_logical, default = FALSE)
   ),
   validator = function(self) {
+
     if (length(self@filepath) != 1) {
       "@filepath must be a single character value"
     }
@@ -35,6 +36,12 @@ S7::method(load, OpenLongData) <- function(x){
   x@components$baseline <- read_baseline(x)
   x@components$longitudinal <- read_longitudinal(x)
   x
+}
+
+get_components <- S7::new_generic("get_components", "x")
+
+S7::method(get_components, OpenLongData) <- function(x){
+  x@components
 }
 
 as_list <- S7::new_generic("as_list", "x")
@@ -82,20 +89,33 @@ OpenLongMesa <- S7::new_class(
 )
 
 S7::method(read_baseline, OpenLongMesa) <- function(x){
-  # TODO: Simar to add code here for loading baseline files
-  # the code below reads in one file given a valid filepath.
-  # readr::read_csv(file = file.path(x@filepath,
-  #                                  "Primary",
-  #                                  "Exam1",
-  #                                  "Data",
-  #                                  "mesae1ecgcw_drepos_20201102.csv"),
-  #                 show_col_types = FALSE)
-  tibble::tibble()
+  input_mesa1 <- readr::read_csv(file = file.path(x@filepath,
+                                                  "Primary",
+                                                  "Exam1",
+                                                  "Data",
+                                                  "mesae1dres20220813.csv"),
+                                 show_col_types = FALSE,
+                                 guess_max = Inf)
+
+  list(input_mesa1 = input_mesa1)
+
 }
 
 S7::method(read_longitudinal, OpenLongMesa) <- function(x){
-  # TODO: Simar to add code here for loading longitudinal files
-  tibble::tibble()
+  fnames <- c("mesae2dres06222012.csv", "mesae3dres06222012.csv",
+              "mesae4dres06222012.csv", "mesae5_drepos_20220820.csv")
+  data_directory <- c("Exam2", "Exam3", "Exam4", "Exam5")
+  purrr::map2(
+    .x = purrr::set_names(fnames),
+    .y = data_directory,
+    .f = ~ readr::read_csv(file = file.path(x@filepath,
+                                            "Primary",
+                                            .y,
+                                            "Data",
+                                            .x),
+                           show_col_types = FALSE,
+                           guess_max = Inf)
+  )
 }
 
 
