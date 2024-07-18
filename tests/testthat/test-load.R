@@ -1,7 +1,7 @@
 
 
 mesa_init <- OpenLongMesa(filepath = 'data-raw/sensitive/MESA')
-mesa_loaded = load(mesa_init)
+mesa_loaded = data_load(mesa_init)
 
 test_that(
   desc = "assert type stability",

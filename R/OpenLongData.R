@@ -30,9 +30,9 @@ read_longitudinal <- S7::new_generic("read_longitudinal", "x")
 
 # each of these functions will be inherited by all child classes
 
-load <- S7::new_generic("load", "x")
+data_load <- S7::new_generic("data_load", "x")
 
-S7::method(load, OpenLongData) <- function(x){
+S7::method(data_load, OpenLongData) <- function(x){
   x@components$baseline <- read_baseline(x)
   x@components$longitudinal <- read_longitudinal(x)
   x
