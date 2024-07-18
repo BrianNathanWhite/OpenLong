@@ -92,11 +92,12 @@ S7::method(read_baseline, OpenLongMesa) <- function(x){
   # TODO: Simar to add code here for loading baseline files
   # the code below reads in one file given a valid filepath.
   input_mesa1 <- readr::read_csv(file = file.path(x@filepath,
-                                            "Primary",
-                                            "Exam1",
-                                            "Data",
-                                            "mesae1dres20220813.csv"),
-                           show_col_types = FALSE)
+                                                  "Primary",
+                                                  "Exam1",
+                                                  "Data",
+                                                  "mesae1dres20220813.csv"),
+                                 show_col_types = FALSE,
+                                 guess_max = Inf)
 
   list(input_mesa1 = input_mesa1)
 
@@ -104,7 +105,20 @@ S7::method(read_baseline, OpenLongMesa) <- function(x){
 
 S7::method(read_longitudinal, OpenLongMesa) <- function(x){
   # TODO: Simar to add code here for loading longitudinal files
-  tibble::tibble()
+  fnames <- c("mesae2dres06222012.csv", "mesae3dres06222012.csv",
+              "mesae4dres06222012.csv", "mesae5_drepos_20220820.csv")
+  data_directory <- c("Exam2", "Exam3", "Exam4", "Exam5")
+  purrr::map2(
+    .x = purrr::set_names(fnames),
+    .y = data_directory,
+    .f = ~ readr::read_csv(file = file.path(x@filepath,
+                                            "Primary",
+                                            .y,
+                                            "Data",
+                                            .x),
+                           show_col_types = FALSE,
+                           guess_max = Inf)
+  )
 }
 
 
