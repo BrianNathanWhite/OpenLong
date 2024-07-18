@@ -104,7 +104,6 @@ S7::method(read_baseline, OpenLongMesa) <- function(x){
 }
 
 S7::method(read_longitudinal, OpenLongMesa) <- function(x){
-  # TODO: Simar to add code here for loading longitudinal files
   fnames <- c("mesae2dres06222012.csv", "mesae3dres06222012.csv",
               "mesae4dres06222012.csv", "mesae5_drepos_20220820.csv")
   data_directory <- c("Exam2", "Exam3", "Exam4", "Exam5")
