@@ -89,8 +89,6 @@ OpenLongMesa <- S7::new_class(
 )
 
 S7::method(read_baseline, OpenLongMesa) <- function(x){
-  # TODO: Simar to add code here for loading baseline files
-  # the code below reads in one file given a valid filepath.
   input_mesa1 <- readr::read_csv(file = file.path(x@filepath,
                                                   "Primary",
                                                   "Exam1",
