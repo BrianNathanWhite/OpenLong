@@ -26,6 +26,12 @@ OpenLongData <- S7::new_class(
 read_baseline     <- S7::new_generic("read_baseline", "x")
 read_longitudinal <- S7::new_generic("read_longitudinal", "x")
 
+derive_baseline     <- S7::new_generic("derive_baseline", "x")
+derive_longitudinal <- S7::new_generic("derive_longitudinal", "x")
+
+clean_baseline     <- S7::new_generic("clean_baseline", "x")
+clean_longitudinal <- S7::new_generic("clean_longitudinal", "x")
+
 # Generics for all open long data objects ----
 
 # each of these functions will be inherited by all child classes
@@ -35,6 +41,25 @@ data_load <- S7::new_generic("data_load", "x")
 S7::method(data_load, OpenLongData) <- function(x){
   x@components$baseline <- read_baseline(x)
   x@components$longitudinal <- read_longitudinal(x)
+  x@loaded <- TRUE
+  x
+}
+
+data_derive <- S7::new_generic("data_derive", "x")
+
+S7::method(data_derive, OpenLongData) <- function(x){
+  x@baseline <- derive_baseline(x)
+  x@longitudinal <- derive_longitudinal(x)
+  x@derived <- TRUE
+  x
+}
+
+data_clean <- S7::new_generic("data_clean", "x")
+
+S7::method(data_clean, OpenLongData) <- function(x){
+  x@baseline <- clean_baseline(x)
+  x@longitudinal <- clean_longitudinal(x)
+  x@cleaned <- TRUE
   x
 }
 

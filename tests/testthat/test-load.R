@@ -1,7 +1,7 @@
 
 
-mesa_init <- OpenLongMesa(filepath = 'data-raw/sensitive/MESA')
-mesa_loaded = data_load(mesa_init)
+mesa_init <- OpenLongMesa(filepath = here::here('data-raw/sensitive/MESA'))
+mesa_loaded <- data_load(mesa_init)
 
 test_that(
   desc = "assert type stability",
@@ -17,7 +17,7 @@ test_that(
     for(i in seq_along(cmp$baseline)){
       expect_s3_class(cmp$baseline[[i]], class = 'data.frame')
     }
-# same assertion for longitudinal components
+    # same assertion for longitudinal components
     for(i in seq_along(cmp$longitudinal)){
       expect_s3_class(cmp$longitudinal[[i]], class = 'data.frame')
     }
