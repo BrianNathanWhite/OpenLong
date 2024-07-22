@@ -92,56 +92,6 @@ S7::method(as_baseline, OpenLongData) <- function(x){
 
 # keeping these in the same file is helpful - it prevents errors that
 # may occur when separate files are not sourced in the right order.
-OpenLongMesa <- S7::new_class(
-  name = "OpenLongMesa",
-  package = 'OpenLong',
-  parent = OpenLongData,
-  validator = function(self) {
-
-    if(length(self@filepath) == 1){
-
-      if("Primary" %nin% list.files(self@filepath)){
-        paste0(
-          "Primary directory not found in filepath: \'", self@filepath, "\'.",
-          "\n- filepath should be the location of",
-          " BioLincc MESA data on your device."
-        )
-      }
-
-    }
-
-  }
-)
-
-S7::method(read_baseline, OpenLongMesa) <- function(x){
-  input_mesa1 <- readr::read_csv(file = file.path(x@filepath,
-                                                  "Primary",
-                                                  "Exam1",
-                                                  "Data",
-                                                  "mesae1dres20220813.csv"),
-                                 show_col_types = FALSE,
-                                 guess_max = Inf)
-
-  list(input_mesa1 = input_mesa1)
-
-}
-
-S7::method(read_longitudinal, OpenLongMesa) <- function(x){
-  fnames <- c("mesae2dres06222012.csv", "mesae3dres06222012.csv",
-              "mesae4dres06222012.csv", "mesae5_drepos_20220820.csv")
-  data_directory <- c("Exam2", "Exam3", "Exam4", "Exam5")
-  purrr::map2(
-    .x = purrr::set_names(fnames),
-    .y = data_directory,
-    .f = ~ readr::read_csv(file = file.path(x@filepath,
-                                            "Primary",
-                                            .y,
-                                            "Data",
-                                            .x),
-                           show_col_types = FALSE,
-                           guess_max = Inf)
-  )
-}
 
 
 OpenLongAbc <- S7::new_class(
