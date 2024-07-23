@@ -196,7 +196,3 @@ S7::method(clean_longitudinal, OpenLongMesa) <- function(x){
     dplyr::select(ID, Exam, Age, BMI, Glucose, hypertension_med, hypertension_his)
 }
 
-# The longitudinal data is now stored in the x@components$longitudinal object within
-#the read_longitudinal method, ensuring it is available for subsequent processing.
-#The clean_longitudinal method was updated to extract and utilize this stored data,
-# resolving the "object not found" error.
