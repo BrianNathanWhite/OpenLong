@@ -36,7 +36,7 @@ S7::method(read_longitudinal, OpenLongMesa) <- function(x){
   fnames <- c("mesae2dres06222012.csv", "mesae3dres06222012.csv",
               "mesae4dres06222012.csv", "mesae5_drepos_20220820.csv")
   data_directory <- c("Exam2", "Exam3", "Exam4", "Exam5")
-  purrr::map2(
+  longitudinal_data <- purrr::map2(
     .x = purrr::set_names(fnames),
     .y = data_directory,
     .f = ~ readr::read_csv(file = file.path(x@filepath,
@@ -47,6 +47,9 @@ S7::method(read_longitudinal, OpenLongMesa) <- function(x){
                            show_col_types = FALSE,
                            guess_max = Inf)
   )
+
+  x@components$longitudinal <- longitudinal_data
+
 }
 
 S7::method(derive_baseline, OpenLongMesa) <- function(x){
@@ -143,6 +146,57 @@ S7::method(clean_baseline, OpenLongMesa) <- function(x){
 
 S7::method(clean_longitudinal, OpenLongMesa) <- function(x){
 
-  tibble::tibble()
+  data_to_use <- x@baseline
 
+  if(is_empty(x@components$longitudinal)){
+    stop("Logintudinal data not found")
+  }
+
+  # Extract the longitudinal data
+  longitudinal_data <- x@components$longitudinal
+  mesa_one <- x@components$baseline$input_mesa1
+  mesa_two <- longitudinal_data[[1]]
+  mesa_three <- longitudinal_data[[2]]
+  mesa_four <- longitudinal_data[[3]]
+  mesa_five <- longitudinal_data[[4]]
+
+
+  mesa_one <- mesa_one %>%
+    dplyr::rename(ID = MESAID, BMI = BMI1C, Age = AGE1C, Glucose = GLUCOS1C) %>%
+    dplyr::mutate(hypertension_med = HTNMED1C, hypertension_his = HTN1C)
+
+  mesa_two <- mesa_two %>%
+    dplyr::rename(ID = mesaid, BMI = bmi2c, Age = age2c, Glucose = glucos2c) %>%
+    dplyr::mutate(hypertension_med = htnmed2c, hypertension_his = htn2c)
+
+  mesa_three <- mesa_three %>%
+    dplyr::rename(ID = mesaid, BMI = bmi3c, Age = age3c, Glucose = glucos3c) %>%
+    dplyr::mutate(hypertension_med = htnmed3c, hypertension_his = htn3c)
+
+  mesa_four <- mesa_four %>%
+    dplyr::rename(ID = mesaid, BMI = bmi4c, Age = age4c, Glucose = glucos4c) %>%
+    dplyr::mutate(hypertension_med = htnmed4c, hypertension_his = htn4c)
+
+  mesa_five <- mesa_five %>%
+    dplyr::rename(ID = MESAID, BMI = BMI5C, Age = AGE5C, Glucose = GLUCOSE5) %>%
+    dplyr::mutate(hypertension_med = HTNMED5C, hypertension_his = HTN5C)
+
+  # Ensure all datasets have a column to identify the exam
+  mesa_one <- mesa_one %>% dplyr::mutate(Exam = 1)
+  mesa_two <- mesa_two %>% dplyr::mutate(Exam = 2)
+  mesa_three <- mesa_three %>% dplyr::mutate(Exam = 3)
+  mesa_four <- mesa_four %>% dplyr::mutate(Exam = 4)
+  mesa_five <- mesa_five %>% dplyr::mutate(Exam = 5)
+
+  # Combine the datasets
+  mesa_combined <- dplyr::bind_rows(mesa_one, mesa_two, mesa_three, mesa_four, mesa_five)
+
+  # Select the relevant columns
+  mesa_longitudinal <- mesa_combined %>%
+    dplyr::select(ID, Exam, Age, BMI, Glucose, hypertension_med, hypertension_his)
 }
+
+# The longitudinal data is now stored in the x@components$longitudinal object within
+#the read_longitudinal method, ensuring it is available for subsequent processing.
+#The clean_longitudinal method was updated to extract and utilize this stored data,
+# resolving the "object not found" error.
