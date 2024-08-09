@@ -1,5 +1,5 @@
-OpenLongARIC <- S7::new_class(
-  name = "OpenLongARIC",
+OpenLongAric <- S7::new_class(
+  name = "OpenLongAric",
   package = 'OpenLong',
   parent = OpenLongData,
   validator = function(self) {
@@ -19,7 +19,7 @@ OpenLongARIC <- S7::new_class(
   }
 )
 
-S7::method(read_baseline, OpenLongARIC) <- function(x){
+S7::method(read_baseline, OpenLongAric) <- function(x){
   folder_V1 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v1','CSV')
   folder_V2 <- file.path(S7::prop(x, "filepath"),'Main_Study', 'v2','CSV')
   folder_AFU <- file.path(S7::prop(x, "filepath"), 'Main_Study','AFU','CSV')
@@ -61,7 +61,7 @@ S7::method(read_baseline, OpenLongARIC) <- function(x){
 }
 
 
-S7::method(read_longitudinal, OpenLongARIC) <- function(x){
+S7::method(read_longitudinal, OpenLongAric) <- function(x){
   folder_v1 <- file.path(S7::prop(x, "filepath"),'Main_Study', 'v1' ,'CSV')
   folder_v2 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v2','CSV')
   folder_v3 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v3','CSV')
@@ -104,19 +104,19 @@ S7::method(read_longitudinal, OpenLongARIC) <- function(x){
   longitudinal_data
 }
 
-S7::method(derive_baseline, OpenLongARIC) <- function(x){
+S7::method(derive_baseline, OpenLongAric) <- function(x){
   tibble::tibble()
 }
 
 
 ## didn't derive anything for baseline
 
-S7::method(derive_longitudinal, OpenLongARIC) <- function(x){
+S7::method(derive_longitudinal, OpenLongAric) <- function(x){
 
 }
 
 
-S7::method(clean_baseline, OpenLongARIC) <- function(x){
+S7::method(clean_baseline, OpenLongAric) <- function(x){
 
   data_use_ARIC <- S7::prop(x, "baseline")
 
