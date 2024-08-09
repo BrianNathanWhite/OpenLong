@@ -14,11 +14,49 @@ OpenLongData <- S7::new_class(
   ),
   validator = function(self) {
 
-    if (length(self@filepath) != 1) {
-      "@filepath must be a single character value"
+    if (length(S7::prop(self, "filepath")) != 1) {
+      "filepath must be a single character value"
     }
   }
 )
+
+#' Print an open long data object
+#'
+#' @param x an object of class `OpenLong::OpenLongData`
+#' @param ... not currently used
+#'
+#' @return `x`, invisibly
+#'
+#' @export
+#'
+`print.OpenLong::OpenLongData` <- function(x, ...){
+
+  cwidth <- cli::console_width()
+
+  top_label <- "OpenLong dataset "
+
+  ndash <- (cwidth - nchar(top_label))
+
+  dashes <- paste(rep("-", ndash), collapse = '')
+
+  status <- c("loaded", "excluded", "cleaned", "derived")
+
+  for(i in seq_along(status)){
+    names(status)[i] <- ifelse(S7::prop(x, status[i]),
+                               yes = "v",
+                               no = "x")
+
+    status[i] <- stringr::str_to_title(status[i])
+
+  }
+
+  cat(top_label, dashes, "\n")
+
+  cli::cli_bullets(status)
+
+  invisible(x)
+
+}
 
 # virtual functions that will be defined in derived classes ----
 
@@ -32,90 +70,123 @@ derive_longitudinal <- S7::new_generic("derive_longitudinal", "x")
 clean_baseline     <- S7::new_generic("clean_baseline", "x")
 clean_longitudinal <- S7::new_generic("clean_longitudinal", "x")
 
+
+
+
 # Generics for all open long data objects ----
 
-# each of these functions will be inherited by all child classes
+#' Load files for an OpenLong data set
+#'
+#' retrieve relevant files for the study of interest
+#'
+#' @param x an object inheriting from the `OpenLong::OpenLongData` class.
+#'
+#' @export
 
 data_load <- S7::new_generic("data_load", "x")
 
 S7::method(data_load, OpenLongData) <- function(x){
-  x@components$baseline <- read_baseline(x)
-  x@components$longitudinal <- read_longitudinal(x)
-  x@loaded <- TRUE
+  S7::prop(x, "components")$baseline <- read_baseline(x)
+  S7::prop(x, "components")$longitudinal <- read_longitudinal(x)
+  S7::prop(x, "loaded") <- TRUE
   x
 }
 
+#' Create new variables within an OpenLong data set
+#'
+#' generates new variables using data from the study of interest
+#'
+#' @inheritParams data_load
+#'
+#' @export
 data_derive <- S7::new_generic("data_derive", "x")
 
 S7::method(data_derive, OpenLongData) <- function(x){
-  x@baseline <- derive_baseline(x)
-  x@longitudinal <- derive_longitudinal(x)
-  x@derived <- TRUE
+  S7::prop(x, "baseline") <- derive_baseline(x)
+  S7::prop(x, "longitudinal") <- derive_longitudinal(x)
+  S7::prop(x, "derived") <- TRUE
   x
 }
 
+#' Clean existing variables within an OpenLong data set
+#'
+#' Modifies existing variables within data from the study of interest
+#'
+#' @inheritParams data_load
+#'
+#' @export
 data_clean <- S7::new_generic("data_clean", "x")
 
 S7::method(data_clean, OpenLongData) <- function(x){
-  x@baseline <- clean_baseline(x)
-  x@longitudinal <- clean_longitudinal(x)
-  x@cleaned <- TRUE
+  S7::prop(x, "baseline") <- clean_baseline(x)
+  S7::prop(x, "longitudinal") <- clean_longitudinal(x)
+  S7::prop(x, "cleaned") <- TRUE
   x
 }
 
+#' Retrieve components from an OpenLong data set
+#'
+#' OpenLong objects contain longitudinal and baseline components.
+#'
+#' @inheritParams data_load
+#'
+#' @export
 get_components <- S7::new_generic("get_components", "x")
 
 S7::method(get_components, OpenLongData) <- function(x){
-  x@components
+  S7::prop(x, "components")
 }
 
+#' Retrieve components from an OpenLong data set
+#'
+#' OpenLong objects contain longitudinal and baseline components.
+#'
+#' @inheritParams data_load
+#'
+#' @export
 as_list <- S7::new_generic("as_list", "x")
 
 S7::method(as_list, OpenLongData) <- function(x){
-  list(baseline = x@baseline, longitudinal = x@longitudinal)
+  list(baseline = S7::prop(x, "baseline"),
+       longitudinal = S7::prop(x, "longitudinal"))
 }
 
 as_longitudinal <- S7::new_generic("as_longitudinal", "x")
 
 S7::method(as_longitudinal, OpenLongData) <- function(x){
-  x@longitudinal
+  S7::prop(x, "longitudinal")
 }
 
 as_baseline <- S7::new_generic("as_baseline", "x")
 
 S7::method(as_baseline, OpenLongData) <- function(x){
-  x@baseline
+  S7::prop(x, "baseline")
 }
 
 
-# Child classes ----
+# identifies whether we should be using the base file in components
+# or a derived data file that was created previously, e.g., data_derive
+# creates an object in the basline slot and if we call data_clean
+# after data_derive we would want data_clean to use the data that data_derive
+# left. However, if we call data_derive before data_clean we want data_derive
+# to use the original components
 
-# keeping these in the same file is helpful - it prevents errors that
-# may occur when separate files are not sourced in the right order.
+identify_usable_data <- S7::new_generic("identify_usable_data", "x")
 
+S7::method(identify_usable_data, OpenLongData) <- function(x, data_type){
 
-OpenLongAbc <- S7::new_class(
-  name = "OpenLongAbc",
-  package = 'OpenLong',
-  parent = OpenLongData,
-  validator = function(self) {
+  data_to_use <- S7::prop(x, data_type)
 
-    if(length(self@filepath) == 1){
+  if(is_empty(data_to_use)){
 
-      # TODO: Brian to add a check for valid filepath
-      # (ping Byron to discuss this and see example in Mesa object)
-
-    }
+    data_to_use <- S7::prop(x, "components")[[data_type]] %>%
+      purrr::reduce(dplyr::left_join)
 
   }
-)
 
-S7::method(read_baseline, OpenLongAbc) <- function(x){
-  # TODO: Brian to add code here for loading baseline files
-  tibble::tibble()
+  data_to_use
+
 }
 
-S7::method(read_longitudinal, OpenLongAbc) <- function(x){
-  # TODO: Brian to add code here for loading longitudinal files
-  tibble::tibble()
-}
+
+
