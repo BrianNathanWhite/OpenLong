@@ -4,11 +4,11 @@ OpenLongMesa <- S7::new_class(
   parent = OpenLongData,
   validator = function(self) {
 
-    if(length(self@filepath) == 1){
+    if(length(S7::prop(self, "filepath")) == 1){
 
-      if("Primary" %nin% list.files(self@filepath)){
+      if("Primary" %nin% list.files(S7::prop(self, "filepath"))){
         paste0(
-          "Primary directory not found in filepath: \'", self@filepath, "\'.",
+          "Primary directory not found in filepath: \'", S7::prop(self, "filepath"), "\'.",
           "\n- filepath should be the location of",
           " BioLincc MESA data on your device."
         )
@@ -20,7 +20,7 @@ OpenLongMesa <- S7::new_class(
 )
 
 S7::method(read_baseline, OpenLongMesa) <- function(x){
-  input_mesa1 <- readr::read_csv(file = file.path(x@filepath,
+  input_mesa1 <- readr::read_csv(file = file.path(S7::prop(x, "filepath"),
                                                   "Primary",
                                                   "Exam1",
                                                   "Data",
@@ -39,7 +39,7 @@ S7::method(read_longitudinal, OpenLongMesa) <- function(x){
   longitudinal_data <- purrr::map2(
     .x = purrr::set_names(fnames),
     .y = data_directory,
-    .f = ~ readr::read_csv(file = file.path(x@filepath,
+    .f = ~ readr::read_csv(file = file.path(S7::prop(x, "filepath"),
                                             "Primary",
                                             .y,
                                             "Data",
@@ -48,17 +48,17 @@ S7::method(read_longitudinal, OpenLongMesa) <- function(x){
                            guess_max = Inf)
   )
 
-  x@components$longitudinal <- longitudinal_data
+  S7::prop(x, "components")$longitudinal <- longitudinal_data
 
 }
 
 S7::method(derive_baseline, OpenLongMesa) <- function(x){
 
-  data_to_use <- x@baseline
+  data_to_use <- S7::prop(x, "baseline")
 
   if(is_empty(data_to_use)){
 
-    data_to_use <- x@components$baseline$input_mesa1
+    data_to_use <- S7::prop(x, "components")$baseline$input_mesa1
 
   }
 
@@ -78,10 +78,10 @@ S7::method(derive_longitudinal, OpenLongMesa) <- function(x){
 }
 
 S7::method(clean_baseline, OpenLongMesa) <- function(x){
-  data_to_use <- x@baseline
+  data_to_use <- S7::prop(x, "baseline")
 
   if(is_empty(data_to_use)){
-    data_to_use <- x@components$baseline$input_mesa1
+    data_to_use <- S7::prop(x, "components")$baseline$input_mesa1
   }
 
   data_to_use %>%
@@ -146,15 +146,15 @@ S7::method(clean_baseline, OpenLongMesa) <- function(x){
 
 S7::method(clean_longitudinal, OpenLongMesa) <- function(x){
 
-  data_to_use <- x@baseline
+  data_to_use <- S7::prop(x, "baseline")
 
-  if(is_empty(x@components$longitudinal)){
+  if(is_empty(S7::prop(x, "components")$longitudinal)){
     stop("Logintudinal data not found")
   }
 
   # Extract the longitudinal data
-  longitudinal_data <- x@components$longitudinal
-  mesa_one <- x@components$baseline$input_mesa1
+  longitudinal_data <- S7::prop(x, "components")$longitudinal
+  mesa_one <- S7::prop(x, "components")$baseline$input_mesa1
   mesa_two <- longitudinal_data[[1]]
   mesa_three <- longitudinal_data[[2]]
   mesa_four <- longitudinal_data[[3]]

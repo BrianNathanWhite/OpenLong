@@ -4,11 +4,11 @@ OpenLongARIC <- S7::new_class(
   parent = OpenLongData,
   validator = function(self) {
 
-    if(length(self@filepath) == 1){
+    if(length(S7::prop(self, "filepath")) == 1){
 
-      if("Main_Study" %nin% list.files(self@filepath)){
+      if("Main_Study" %nin% list.files(S7::prop(self, "filepath"))){
         paste0(
-          "Main_Study directory not found in filepath: \'", self@filepath, "\'.",
+          "Main_Study directory not found in filepath: \'", S7::prop(self, "filepath"), "\'.",
           "\n- filepath should be the location of",
           " BioLincc ARIC data on your device."
         )
@@ -20,11 +20,11 @@ OpenLongARIC <- S7::new_class(
 )
 
 S7::method(read_baseline, OpenLongARIC) <- function(x){
-  folder_V1 <- file.path(x@filepath, 'Main_Study', 'v1','CSV')
-  folder_V2 <- file.path(x@filepath,'Main_Study', 'v2','CSV')
-  folder_AFU <- file.path(x@filepath, 'Main_Study','AFU','CSV')
-  folder_V5 <- file.path(x@filepath, 'Main_Study', 'v5','CSV')
-  folder_V3 <- file.path(x@filepath, 'Main_Study','v3','CSV')
+  folder_V1 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v1','CSV')
+  folder_V2 <- file.path(S7::prop(x, "filepath"),'Main_Study', 'v2','CSV')
+  folder_AFU <- file.path(S7::prop(x, "filepath"), 'Main_Study','AFU','CSV')
+  folder_V5 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v5','CSV')
+  folder_V3 <- file.path(S7::prop(x, "filepath"), 'Main_Study','v3','CSV')
 
   # Read the CSV files from respective folders
   derive <- readr::read_csv(file = file.path(folder_V1, 'derive13.csv'), show_col_types = FALSE, guess_max = Inf)
@@ -62,13 +62,13 @@ S7::method(read_baseline, OpenLongARIC) <- function(x){
 
 
 S7::method(read_longitudinal, OpenLongARIC) <- function(x){
-  folder_v1 <- file.path(x@filepath,'Main_Study', 'v1' ,'CSV')
-  folder_v2 <- file.path(x@filepath, 'Main_Study', 'v2','CSV')
-  folder_v3 <- file.path(x@filepath, 'Main_Study', 'v3','CSV')
-  folder_v4 <- file.path(x@filepath, 'Main_Study', 'v4','CSV')
-  folder_v5 <- file.path(x@filepath, 'Main_Study', 'v5','CSV')
-  folder_v6 <- file.path(x@filepath, 'Main_Study', 'v6','CSV')
-  folder_v7 <- file.path(x@filepath, 'Main_Study', 'v7','CSV')
+  folder_v1 <- file.path(S7::prop(x, "filepath"),'Main_Study', 'v1' ,'CSV')
+  folder_v2 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v2','CSV')
+  folder_v3 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v3','CSV')
+  folder_v4 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v4','CSV')
+  folder_v5 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v5','CSV')
+  folder_v6 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v6','CSV')
+  folder_v7 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v7','CSV')
 
   # Read the CSV files from respective folders
   derive1 <- readr::read_csv(file = file.path(folder_v1, 'derive13.csv'), show_col_types = FALSE, guess_max = Inf)
@@ -118,10 +118,10 @@ S7::method(derive_longitudinal, OpenLongARIC) <- function(x){
 
 S7::method(clean_baseline, OpenLongARIC) <- function(x){
 
-  data_use_ARIC <- x@baseline
+  data_use_ARIC <- S7::prop(x, "baseline")
 
   if(is_empty(data_use_ARIC)){
-    data_use_ARIC <- x@components$baseline %>%
+    data_use_ARIC <- S7::prop(x, "components")$baseline %>%
       purrr::reduce(.f = dplyr::left_join)
   }
 

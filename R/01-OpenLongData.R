@@ -14,8 +14,8 @@ OpenLongData <- S7::new_class(
   ),
   validator = function(self) {
 
-    if (length(self@filepath) != 1) {
-      "@filepath must be a single character value"
+    if (length(S7::prop(self, "filepath")) != 1) {
+      "filepath must be a single character value"
     }
   }
 )
@@ -39,52 +39,53 @@ clean_longitudinal <- S7::new_generic("clean_longitudinal", "x")
 data_load <- S7::new_generic("data_load", "x")
 
 S7::method(data_load, OpenLongData) <- function(x){
-  x@components$baseline <- read_baseline(x)
-  x@components$longitudinal <- read_longitudinal(x)
-  x@loaded <- TRUE
+  S7::prop(x, "components")$baseline <- read_baseline(x)
+  S7::prop(x, "components")$longitudinal <- read_longitudinal(x)
+  S7::prop(x, "loaded") <- TRUE
   x
 }
 
 data_derive <- S7::new_generic("data_derive", "x")
 
 S7::method(data_derive, OpenLongData) <- function(x){
-  x@baseline <- derive_baseline(x)
-  x@longitudinal <- derive_longitudinal(x)
-  x@derived <- TRUE
+  S7::prop(x, "baseline") <- derive_baseline(x)
+  S7::prop(x, "longitudinal") <- derive_longitudinal(x)
+  S7::prop(x, "derived") <- TRUE
   x
 }
 
 data_clean <- S7::new_generic("data_clean", "x")
 
 S7::method(data_clean, OpenLongData) <- function(x){
-  x@baseline <- clean_baseline(x)
-  x@longitudinal <- clean_longitudinal(x)
-  x@cleaned <- TRUE
+  S7::prop(x, "baseline") <- clean_baseline(x)
+  S7::prop(x, "longitudinal") <- clean_longitudinal(x)
+  S7::prop(x, "cleaned") <- TRUE
   x
 }
 
 get_components <- S7::new_generic("get_components", "x")
 
 S7::method(get_components, OpenLongData) <- function(x){
-  x@components
+  S7::prop(x, "components")
 }
 
 as_list <- S7::new_generic("as_list", "x")
 
 S7::method(as_list, OpenLongData) <- function(x){
-  list(baseline = x@baseline, longitudinal = x@longitudinal)
+  list(baseline = S7::prop(x, "baseline"),
+       longitudinal = S7::prop(x, "longitudinal"))
 }
 
 as_longitudinal <- S7::new_generic("as_longitudinal", "x")
 
 S7::method(as_longitudinal, OpenLongData) <- function(x){
-  x@longitudinal
+  S7::prop(x, "longitudinal")
 }
 
 as_baseline <- S7::new_generic("as_baseline", "x")
 
 S7::method(as_baseline, OpenLongData) <- function(x){
-  x@baseline
+  S7::prop(x, "baseline")
 }
 
 
