@@ -1,3 +1,20 @@
+
+#' An object to hold MESA data
+#'
+#' Holds a set of baseline and longitudinal data from MESA.
+#'
+#' @param filepath a path to the location of Biolincc's MESA package.
+#'   If `NULL` or missing, an error will be thrown. Eventually,
+#'   a `NULL` or missing value will imply that simulated data will
+#'   be used.
+#'
+#' @return An `OpenLong::OpenLongMesa` S7 object.
+#'
+#' @export
+#'
+#' @family constructors
+#'
+
 OpenLongMesa <- S7::new_class(
   name = "OpenLongMesa",
   package = 'OpenLong',
@@ -30,7 +47,8 @@ S7::method(read_baseline, OpenLongMesa) <- function(x){
                       "mesae1dres20220813.csv")
   )
 
-  list(input_mesa1 = input_mesa1)
+  list(input_mesa1 = input_mesa1) %>%
+    purrr::map(tibble::as_tibble)
 
 }
 

@@ -75,7 +75,13 @@ clean_longitudinal <- S7::new_generic("clean_longitudinal", "x")
 
 # Generics for all open long data objects ----
 
-
+#' Load files for an OpenLong data set
+#'
+#' retrieve relevant files for the study of interest
+#'
+#' @param x an object inheriting from the `OpenLong::OpenLongData` class.
+#'
+#' @export
 
 data_load <- S7::new_generic("data_load", "x")
 
@@ -86,6 +92,13 @@ S7::method(data_load, OpenLongData) <- function(x){
   x
 }
 
+#' Create new variables within an OpenLong data set
+#'
+#' generates new variables using data from the study of interest
+#'
+#' @inheritParams data_load
+#'
+#' @export
 data_derive <- S7::new_generic("data_derive", "x")
 
 S7::method(data_derive, OpenLongData) <- function(x){
@@ -95,6 +108,13 @@ S7::method(data_derive, OpenLongData) <- function(x){
   x
 }
 
+#' Clean existing variables within an OpenLong data set
+#'
+#' Modifies existing variables within data from the study of interest
+#'
+#' @inheritParams data_load
+#'
+#' @export
 data_clean <- S7::new_generic("data_clean", "x")
 
 S7::method(data_clean, OpenLongData) <- function(x){
@@ -104,12 +124,26 @@ S7::method(data_clean, OpenLongData) <- function(x){
   x
 }
 
+#' Retrieve components from an OpenLong data set
+#'
+#' OpenLong objects contain longitudinal and baseline components.
+#'
+#' @inheritParams data_load
+#'
+#' @export
 get_components <- S7::new_generic("get_components", "x")
 
 S7::method(get_components, OpenLongData) <- function(x){
   S7::prop(x, "components")
 }
 
+#' Retrieve components from an OpenLong data set
+#'
+#' OpenLong objects contain longitudinal and baseline components.
+#'
+#' @inheritParams data_load
+#'
+#' @export
 as_list <- S7::new_generic("as_list", "x")
 
 S7::method(as_list, OpenLongData) <- function(x){
@@ -128,5 +162,31 @@ as_baseline <- S7::new_generic("as_baseline", "x")
 S7::method(as_baseline, OpenLongData) <- function(x){
   S7::prop(x, "baseline")
 }
+
+
+# identifies whether we should be using the base file in components
+# or a derived data file that was created previously, e.g., data_derive
+# creates an object in the basline slot and if we call data_clean
+# after data_derive we would want data_clean to use the data that data_derive
+# left. However, if we call data_derive before data_clean we want data_derive
+# to use the original components
+
+identify_usable_data <- S7::new_generic("identify_usable_data", "x")
+
+S7::method(identify_usable_data, OpenLongData) <- function(x, data_type){
+
+  data_to_use <- S7::prop(x, data_type)
+
+  if(is_empty(data_to_use)){
+
+    data_to_use <- S7::prop(x, "components")[[data_type]] %>%
+      purrr::reduce(dplyr::left_join)
+
+  }
+
+  data_to_use
+
+}
+
 
 

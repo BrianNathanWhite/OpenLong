@@ -1,3 +1,16 @@
+#' An object to hold ARIC data
+#'
+#' Holds a set of baseline and longitudinal data from ARIC.
+#'
+#' @inheritParams OpenLongMesa
+#'
+#' @return An `OpenLong::OpenLongAric` S7 object.
+#'
+#' @export
+#'
+#' @family constructors
+#'
+
 OpenLongAric <- S7::new_class(
   name = "OpenLongAric",
   package = 'OpenLong',
