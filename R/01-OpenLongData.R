@@ -20,6 +20,44 @@ OpenLongData <- S7::new_class(
   }
 )
 
+#' Print an open long data object
+#'
+#' @param x an object of class `OpenLong::OpenLongData`
+#' @param ... not currently used
+#'
+#' @return `x`, invisibly
+#'
+#' @export
+#'
+`print.OpenLong::OpenLongData` <- function(x, ...){
+
+  cwidth <- cli::console_width()
+
+  top_label <- "OpenLong dataset "
+
+  ndash <- (cwidth - nchar(top_label))
+
+  dashes <- paste(rep("-", ndash), collapse = '')
+
+  status <- c("loaded", "excluded", "cleaned", "derived")
+
+  for(i in seq_along(status)){
+    names(status)[i] <- ifelse(S7::prop(x, status[i]),
+                               yes = "v",
+                               no = "x")
+
+    status[i] <- stringr::str_to_title(status[i])
+
+  }
+
+  cat(top_label, dashes, "\n")
+
+  cli::cli_bullets(status)
+
+  invisible(x)
+
+}
+
 # virtual functions that will be defined in derived classes ----
 
 # each of these functions needs to be defined in all child classes
@@ -32,9 +70,12 @@ derive_longitudinal <- S7::new_generic("derive_longitudinal", "x")
 clean_baseline     <- S7::new_generic("clean_baseline", "x")
 clean_longitudinal <- S7::new_generic("clean_longitudinal", "x")
 
+
+
+
 # Generics for all open long data objects ----
 
-# each of these functions will be inherited by all child classes
+
 
 data_load <- S7::new_generic("data_load", "x")
 
@@ -89,34 +130,3 @@ S7::method(as_baseline, OpenLongData) <- function(x){
 }
 
 
-# Child classes ----
-
-# keeping these in the same file is helpful - it prevents errors that
-# may occur when separate files are not sourced in the right order.
-
-
-OpenLongAbc <- S7::new_class(
-  name = "OpenLongAbc",
-  package = 'OpenLong',
-  parent = OpenLongData,
-  validator = function(self) {
-
-    if(length(self@filepath) == 1){
-
-      # TODO: Brian to add a check for valid filepath
-      # (ping Byron to discuss this and see example in Mesa object)
-
-    }
-
-  }
-)
-
-S7::method(read_baseline, OpenLongAbc) <- function(x){
-  # TODO: Brian to add code here for loading baseline files
-  tibble::tibble()
-}
-
-S7::method(read_longitudinal, OpenLongAbc) <- function(x){
-  # TODO: Brian to add code here for loading longitudinal files
-  tibble::tibble()
-}

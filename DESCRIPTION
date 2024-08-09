@@ -18,8 +18,11 @@ Depends:
     R (>= 4.3.0)
 LazyData: true
 Imports: 
+    cli,
+    data.table,
     dplyr,
     readr,
     S7,
+    stringr,
     tibble,
     tidyr

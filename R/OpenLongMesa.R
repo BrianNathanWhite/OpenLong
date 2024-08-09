@@ -8,7 +8,8 @@ OpenLongMesa <- S7::new_class(
 
       if("Primary" %nin% list.files(S7::prop(self, "filepath"))){
         paste0(
-          "Primary directory not found in filepath: \'", S7::prop(self, "filepath"), "\'.",
+          "Primary directory not found in filepath: \'",
+          S7::prop(self, "filepath"), "\'.",
           "\n- filepath should be the location of",
           " BioLincc MESA data on your device."
         )
@@ -20,32 +21,36 @@ OpenLongMesa <- S7::new_class(
 )
 
 S7::method(read_baseline, OpenLongMesa) <- function(x){
-  input_mesa1 <- readr::read_csv(file = file.path(S7::prop(x, "filepath"),
-                                                  "Primary",
-                                                  "Exam1",
-                                                  "Data",
-                                                  "mesae1dres20220813.csv"),
-                                 show_col_types = FALSE,
-                                 guess_max = Inf)
+
+  input_mesa1 <- data.table::fread(
+    input = file.path(S7::prop(x, "filepath"),
+                      "Primary",
+                      "Exam1",
+                      "Data",
+                      "mesae1dres20220813.csv")
+  )
 
   list(input_mesa1 = input_mesa1)
 
 }
 
 S7::method(read_longitudinal, OpenLongMesa) <- function(x){
-  fnames <- c("mesae2dres06222012.csv", "mesae3dres06222012.csv",
-              "mesae4dres06222012.csv", "mesae5_drepos_20220820.csv")
+
+  fnames <- c("mesae2dres06222012.csv",
+              "mesae3dres06222012.csv",
+              "mesae4dres06222012.csv",
+              "mesae5_drepos_20220820.csv")
+
   data_directory <- c("Exam2", "Exam3", "Exam4", "Exam5")
+
   longitudinal_data <- purrr::map2(
     .x = purrr::set_names(fnames),
     .y = data_directory,
-    .f = ~ readr::read_csv(file = file.path(S7::prop(x, "filepath"),
-                                            "Primary",
-                                            .y,
-                                            "Data",
-                                            .x),
-                           show_col_types = FALSE,
-                           guess_max = Inf)
+    .f = ~ data.table::fread(
+      input = file.path(S7::prop(x, "filepath"),
+                        "Primary", .y, "Data", .x)
+    ) %>%
+      tibble::as_tibble()
   )
 
   S7::prop(x, "components")$longitudinal <- longitudinal_data
@@ -78,6 +83,7 @@ S7::method(derive_longitudinal, OpenLongMesa) <- function(x){
 }
 
 S7::method(clean_baseline, OpenLongMesa) <- function(x){
+
   data_to_use <- S7::prop(x, "baseline")
 
   if(is_empty(data_to_use)){

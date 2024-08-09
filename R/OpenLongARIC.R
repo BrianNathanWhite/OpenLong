@@ -8,7 +8,8 @@ OpenLongAric <- S7::new_class(
 
       if("Main_Study" %nin% list.files(S7::prop(self, "filepath"))){
         paste0(
-          "Main_Study directory not found in filepath: \'", S7::prop(self, "filepath"), "\'.",
+          "Main_Study directory not found in filepath: \'",
+          S7::prop(self, "filepath"), "\'.",
           "\n- filepath should be the location of",
           " BioLincc ARIC data on your device."
         )
@@ -20,49 +21,41 @@ OpenLongAric <- S7::new_class(
 )
 
 S7::method(read_baseline, OpenLongAric) <- function(x){
-  folder_V1 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v1','CSV')
-  folder_V2 <- file.path(S7::prop(x, "filepath"),'Main_Study', 'v2','CSV')
-  folder_AFU <- file.path(S7::prop(x, "filepath"), 'Main_Study','AFU','CSV')
-  folder_V5 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v5','CSV')
-  folder_V3 <- file.path(S7::prop(x, "filepath"), 'Main_Study','v3','CSV')
+
+  folder_V1  <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v1', 'CSV')
+  folder_V2  <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v2', 'CSV')
+  folder_AFU <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'AFU','CSV')
+  folder_V5  <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v5', 'CSV')
+  folder_V3  <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v3', 'CSV')
 
   # Read the CSV files from respective folders
-  derive <- readr::read_csv(file = file.path(folder_V1, 'derive13.csv'), show_col_types = FALSE, guess_max = Inf)
-  ftra02 <- readr::read_csv(file = file.path(folder_V1, 'ftra02.csv'), show_col_types = FALSE, guess_max = Inf)
-  fhxa <- readr::read_csv(file = file.path(folder_V2, 'fhxa.csv'), show_col_types = FALSE, guess_max = Inf)
-  mcups1 <- readr::read_csv(file = file.path(folder_AFU, 'mcups1.csv'), show_col_types = FALSE, guess_max = Inf)
-  nhx <- readr::read_csv(file = file.path(folder_V5, 'nhx.csv'), show_col_types = FALSE, guess_max = Inf)
-  phxa04 <- readr::read_csv(file = file.path(folder_V3, 'phxa04.csv'), show_col_types = FALSE, guess_max = Inf)
-  hom <- readr::read_csv(file = file.path(folder_V1, 'hom.csv'), show_col_types = FALSE, guess_max = Inf)
-  amha02 <- readr::read_csv(file = file.path(folder_V3, 'amha02.csv'), show_col_types = FALSE, guess_max = Inf)
+  derive <- data.table::fread(input = file.path(folder_V1, 'derive13.csv'))
+  ftra02 <- data.table::fread(input = file.path(folder_V1, 'ftra02.csv'))
+  fhxa <- data.table::fread(input = file.path(folder_V2, 'fhxa.csv'))
+  mcups1 <- data.table::fread(input = file.path(folder_AFU, 'mcups1.csv'))
+  nhx <- data.table::fread(input = file.path(folder_V5, 'nhx.csv'))
+  phxa04 <- data.table::fread(input = file.path(folder_V3, 'phxa04.csv'))
+  hom <- data.table::fread(input = file.path(folder_V1, 'hom.csv'))
+  amha02 <- data.table::fread(input = file.path(folder_V3, 'amha02.csv'))
 
-  # # Combine the read data into a list
-  # input_base <- list(derive = derive,
-  #                    ftra02 = ftra02,
-  #                    fhxa = fhxa,
-  #                    mcups1 = mcups1,
-  #                    nhx = nhx,
-  #                    phxa04 = phxa04,
-  #                    hom = hom,
-  #                    amha02 = amha02)
 
   # Return the list of data frames
-  input_base <- list(derive = derive,
-                     ftra02 = ftra02,
-                     fhxa = fhxa,
-                     mcups1 = mcups1,
-                     nhx = nhx,
-                     phxa04 = phxa04,
-                     hom = hom,
-                     amha02 = amha02)
-
-  input_base
+  list(derive = derive,
+       ftra02 = ftra02,
+       fhxa = fhxa,
+       mcups1 = mcups1,
+       nhx = nhx,
+       phxa04 = phxa04,
+       hom = hom,
+       amha02 = amha02) %>%
+    purrr::map(tibble::as_tibble)
 
 }
 
 
 S7::method(read_longitudinal, OpenLongAric) <- function(x){
-  folder_v1 <- file.path(S7::prop(x, "filepath"),'Main_Study', 'v1' ,'CSV')
+
+  folder_v1 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v1' ,'CSV')
   folder_v2 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v2','CSV')
   folder_v3 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v3','CSV')
   folder_v4 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v4','CSV')
@@ -71,22 +64,20 @@ S7::method(read_longitudinal, OpenLongAric) <- function(x){
   folder_v7 <- file.path(S7::prop(x, "filepath"), 'Main_Study', 'v7','CSV')
 
   # Read the CSV files from respective folders
-  derive1 <- readr::read_csv(file = file.path(folder_v1, 'derive13.csv'), show_col_types = FALSE, guess_max = Inf)
-  derive2 <- readr::read_csv(file = file.path(folder_v2, 'derive2_10.csv'), show_col_types = FALSE, guess_max = Inf)
-  derive3 <- readr::read_csv(file = file.path(folder_v3, 'derive37.csv'), show_col_types = FALSE, guess_max = Inf)
-  derive4 <- readr::read_csv(file = file.path(folder_v4, 'derive47.csv'), show_col_types = FALSE, guess_max = Inf)
-  derive5 <- readr::read_csv(file = file.path(folder_v5, 'derive51.csv'), show_col_types = FALSE, guess_max = Inf)
-  derive6 <- readr::read_csv(file = file.path(folder_v6, 'derive61.csv'), show_col_types = FALSE, guess_max = Inf)
-  derive7 <- readr::read_csv(file = file.path(folder_v7, 'derive71.csv'), show_col_types = FALSE, guess_max = Inf)
-
-  bpua03 <- readr::read_csv(file = file.path(folder_v3, 'bpua03.csv'), show_col_types = FALSE, guess_max = Inf)
-  bpub04 <- readr::read_csv(file = file.path(folder_v4, 'bpub04.csv'), show_col_types = FALSE, guess_max = Inf)
-
-  paq <- readr::read_csv(file = file.path(folder_v6, 'paq.csv'), show_col_types = FALSE, guess_max = Inf)
-  paqa04 <- readr::read_csv(file = file.path(folder_v4, 'paqa04.csv'), show_col_types = FALSE, guess_max = Inf)
+  derive1 <- data.table::fread(input = file.path(folder_v1, 'derive13.csv'))
+  derive2 <- data.table::fread(input = file.path(folder_v2, 'derive2_10.csv'))
+  derive3 <- data.table::fread(input = file.path(folder_v3, 'derive37.csv'))
+  derive4 <- data.table::fread(input = file.path(folder_v4, 'derive47.csv'))
+  derive5 <- data.table::fread(input = file.path(folder_v5, 'derive51.csv'))
+  derive6 <- data.table::fread(input = file.path(folder_v6, 'derive61.csv'))
+  derive7 <- data.table::fread(input = file.path(folder_v7, 'derive71.csv'))
+  bpua03  <- data.table::fread(input = file.path(folder_v3, 'bpua03.csv'))
+  bpub04  <- data.table::fread(input = file.path(folder_v4, 'bpub04.csv'))
+  paq     <- data.table::fread(input = file.path(folder_v6, 'paq.csv'))
+  paqa04  <- data.table::fread(input = file.path(folder_v4, 'paqa04.csv'))
 
   # Combine the read data into a list
-  longitudinal_data <- list(
+  list(
     derive1 = derive1,
     derive2 = derive2,
     derive3 = derive3,
@@ -98,10 +89,9 @@ S7::method(read_longitudinal, OpenLongAric) <- function(x){
     bpub04 = bpub04,
     paq = paq,
     paqa04 = paqa04
-  )
+  ) %>%
+    purrr::map(tibble::as_tibble)
 
-  # Return the list of data frames
-  longitudinal_data
 }
 
 S7::method(derive_baseline, OpenLongAric) <- function(x){
