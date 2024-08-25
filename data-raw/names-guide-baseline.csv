@@ -1,0 +1,38 @@
+﻿description,name_harmonized,name_aric,name_mesa,name_abc,name_chs
+Participant ID,subject_id,ID_C ,MESAID ,HABCID,IDNO
+Race,race,RACEGRP,RACE1C,RACE,"RACE01, ROTHER01"
+Gender,gender,GENDER,GENDER1,GENDER,GEND01
+HABC Clinic Site,site_id,CENTER1D,,SITE,NA
+Age (years) at Year 1 Clinic Visit,age,V1AGE01,AGE1C ,CV1AGE,"AGE01, AGE"
+Marital Status,marital_status,FHXA01,MARITAL1,TSMARSTA,"MARIT01, MARIT32"
+"In general, how is your health?",health_status_baseline,,,FPHSTAT,"HEALT01, HLTH137, HLTH129, HLTH159"
+Number of people in your household?,people_household,FTRA24,,HQSSOPIH,
+Previous CHD self-report & meds?,chd_hist,,,Y1PCHD1,
+Previous congestive heart failure?,chf_hist,MCU6,,Y1PCHF,
+Previous cerebrovascular disease?,cvd_hist,NHX4D,,Y1PCBVD,
+Previous glucose intolerance (FG Criter)?,glucose_intol_hist,GLUSIU01,glucos1,Y1ADAEPI,
+Previous DX Knee OA,knee_oa_hist,,,Y1POAKN,
+Previous hypertension self-report & meds?,hypertension_hist,HYPTMD01,HIGHBP1,Y1PHBP1,
+Previous hypertension physiological?,,HRAA38 ,BPHXAGE1,Y1PHBP2,
+"Previous depression, S-R/Meds (Not CES-D)?",depression_hist,NHX6B,,Y1PDEPR1,"DEPRES37, DEPRES57"
+At risk for depression (CES-D GE 16)?,depression_risk,"CESD51, (CESD61, CESD71)",,Y1PDEPR2,
+Previous clinical pulmonary disease?,pulmonary_hist,,,Y1PPULCD,
+Previous cancer?,cancer_hist,HOM10F,CANCER1,Y1PCANCR,DIAG01
+"Incidence of cancer, any type?",cancer_baseline, AMHA18 ,BRSTCN1,CANANYI,DIAG01
+Incidience of MI?,mi_baseline,,major21,CHDMI,"MI07, MI37, NEWMI39, NEWMI29, MI57, NEWI59"
+Incidence of CHD?,chd_baseline,,,CHDI,"HRTFLR07, CHF37, NEWCHF39, NEWCHF29, CHF57, NEWCHF59"
+Incidence of stroke?,stroke_baseine,,,STROKEI,"STK22, STK37, NEWSTIK39, NEWSTK29, STK22, NEWSTK59"
+Incidence of CVD?,cvd_baseline,,,CVDI,
+Teng 3MS?,depression_mmm,,,MMMSCORE,
+Completed years of eductation,education_years,HOM54,EDUC1,EDUC,GRADE01
+Family income,family_income,PHXA60,INCOME1,FAMINC,INCOME01
+Walking speed (m/sec) over 6 m,walk_speed,AVGWALK4MSP61,q08wmcn1,Y1UWPACE,
+kcal/week walking and exercise,exercise_kcal,,,HAKCAL,
+Walking and exercise (kcal) category,,,,HACAT,
+Walking ability index (9=best),walk_index,,,WKAINDEX,
+Pack-years exposure to cigarettes,smoke_packyears,CIGTYR01,CIGSDAY1,PACKYR1,
+Drinking history at baseline,drinking_hist,,ALCAGE1,DRINKER1,
+Current drinking consumption at baseline,drinking_baseline,CURDRK02,CURALC1,CURDRNK1,
+Knee pain (either) most days past 12 months,knee_pain_baseline,,,Y1KP12MO,"KNEES37, PNKNEE29, PNKNEE57, PNKNEE59"
+CES-D,cesd_baseline,CES13,CESD1C,CES_DBASELINE,
+Chair stands per second,chair_stands_baseline,PFX2B,,CHR5PACE_BASELINE,
