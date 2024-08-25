@@ -10,7 +10,8 @@ OpenLongData <- S7::new_class(
     loaded       = S7::new_property(S7::class_logical, default = FALSE),
     excluded     = S7::new_property(S7::class_logical, default = FALSE),
     cleaned      = S7::new_property(S7::class_logical, default = FALSE),
-    derived      = S7::new_property(S7::class_logical, default = FALSE)
+    derived      = S7::new_property(S7::class_logical, default = FALSE),
+    names_harmonized = S7::new_property(S7::class_logical, default = FALSE)
   ),
   validator = function(self) {
 
@@ -70,6 +71,8 @@ derive_longitudinal <- S7::new_generic("derive_longitudinal", "x")
 clean_baseline     <- S7::new_generic("clean_baseline", "x")
 clean_longitudinal <- S7::new_generic("clean_longitudinal", "x")
 
+harmonize_names_baseline <- S7::new_generic("harmonize_names_baseline", "x")
+harmonize_names_longitudinal <- S7::new_generic("harmonize_names_longitudinal", "x")
 
 
 
@@ -122,6 +125,48 @@ S7::method(data_clean, OpenLongData) <- function(x){
   S7::prop(x, "longitudinal") <- clean_longitudinal(x)
   S7::prop(x, "cleaned") <- TRUE
   x
+}
+
+
+#' Harmonize variable names of an OpenLong data set
+#'
+#' Modifies existing variables within data from the study of interest
+#'
+#' @inheritParams data_load
+#'
+#' @export
+data_harmonize_names <- S7::new_generic("data_harmonize_names", "x")
+
+S7::method(data_harmonize_names, OpenLongData) <- function(x){
+  S7::prop(x, "baseline") <- harmonize_names_baseline(x)
+  S7::prop(x, "longitudinal") <- harmonize_names_longitudinal(x)
+  S7::prop(x, "names_harmonized") <- TRUE
+  x
+}
+
+S7::method(harmonize_names_baseline, OpenLongData) <- function(x){
+
+  study <- class(x)[1] %>%
+    stringr::str_remove("^OpenLong\\:\\:OpenLong") %>%
+    stringr::str_to_lower()
+
+  name_x <- paste("name", study, sep = '_') %>%
+    purrr::set_names('name_current')
+
+  recoder <- names_guide_baseline %>%
+    dplyr::select(name_harmonized, !!name_x) %>%
+    tidyr::drop_na() %>%
+    dplyr::filter(name_current %in% names(S7::prop(x, 'baseline'))) %>%
+    tibble::deframe()
+
+  dplyr::select(S7::prop(x, "baseline"), !!!recoder)
+
+}
+
+S7::method(harmonize_names_longitudinal, OpenLongData) <- function(x){
+
+  S7::prop(x, 'longitudinal')
+
 }
 
 #' Retrieve components from an OpenLong data set
